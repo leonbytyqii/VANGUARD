@@ -1,0 +1,21 @@
+title: Scheduled Task Creation via schtasks.exe
+id: sigma_persistence_scheduled_task
+status: stable
+description: >
+  Detects use of schtasks.exe to create a new scheduled task, a common
+  Windows persistence mechanism. Scoped to the /create verb specifically
+  — /query and /delete are excluded to reduce noise from legitimate
+  administration and cleanup activity.
+level: medium
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_tool:
+    Image|endswith: '\schtasks.exe'
+  selection_verb:
+    CommandLine|contains: '/create'
+  condition: selection_tool and selection_verb
+tags:
+  - attack.persistence
+  - attack.t1053.005

@@ -1,0 +1,28 @@
+title: Suspicious PowerShell Encoded Command
+id: sigma_suspicious_powershell_encoded
+status: stable
+description: >
+  Detects PowerShell invoked with -EncodedCommand (or its short forms),
+  a common technique to obfuscate malicious commands from casual log
+  review and simple string-based AV signatures. Legitimate use exists
+  (some deployment tooling), so this is scoped to `level: high` rather
+  than `critical` — it should raise an alert for triage, not an
+  auto-response.
+level: high
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains:
+      - '-enc '
+      - '-EncodedCommand'
+      - '-e '
+      - ' -en '
+  condition: selection
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.defense_evasion
+  - attack.t1027

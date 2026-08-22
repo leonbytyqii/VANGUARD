@@ -1,0 +1,67 @@
+# ---------------------------------------------------------------------------
+# Secrets — the first section on purpose.
+#
+# `.env` files carry the JWT signing key, database password, and any threat-
+# intel / AI provider keys. `.env.example` is the committed template and is
+# explicitly re-included below; nothing else matching .env* ever should be.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Test / tooling caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.hypothesis/
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- Local database / runtime state ---
+*.sqlite3
+*.db
+pgdata/
+.soc-ai-dev/
+
+# --- Packaging artifacts ---
+*.zip
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

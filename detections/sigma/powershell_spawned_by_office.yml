@@ -1,0 +1,31 @@
+title: PowerShell or Cmd Spawned by an Office Application
+id: sigma_powershell_spawned_by_office
+status: stable
+description: >
+  Microsoft Office applications spawning a command interpreter is a
+  classic signature of a malicious macro/document (initial access ->
+  execution). Office applications do not need to launch a shell as part
+  of normal, expected behavior.
+level: high
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\winword.exe'
+      - '\excel.exe'
+      - '\powerpnt.exe'
+      - '\outlook.exe'
+  selection_child:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\cmd.exe'
+      - '\wscript.exe'
+      - '\cscript.exe'
+  condition: selection_parent and selection_child
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.t1204.002
+  - attack.initial_access
