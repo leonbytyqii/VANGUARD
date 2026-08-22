@@ -291,3 +291,51 @@ def test_change_password_success_then_old_password_stops_working(client):
 
     new_login = login(client, user.email, "N3wSup3r$ecure!")
     assert new_login.status_code == 200
+
+
+def test_refresh_cookie_path_covers_the_proxied_frontend_route(client):
+    """
+    Regression: the refresh cookie was scoped `Path=/api/v1/auth`, but the
+    browser never calls that path — the Next.js frontend rewrites
+    `/api/backend/*` to `/api/*`, so from the browser's side the endpoint
+    is `/api/backend/v1/auth/refresh`. A cookie on the narrower path is
+    silently never sent, refresh answered "No refresh token presented",
+    and every session died at the 30-minute access-token expiry with no
+    way to recover.
+
+    `/api` is the common ancestor of the direct and proxied paths.
+    """
+    org = create_organization()
+    user, password = create_user(org, role_name="soc_analyst")
+
+    resp = client.post("/api/v1/auth/login", json={"email": user.email, "password": password})
+    assert resp.status_code == 200
+
+    set_cookie = resp.headers["set-cookie"]
+    assert "Path=/api" in set_cookie, set_cookie
+    assert "Path=/api/v1/auth" not in set_cookie, "too narrow for the proxied route"
+    assert "HttpOnly" in set_cookie, "JavaScript must never be able to read the refresh token"
+
+    # Both the direct and the proxied paths must sit underneath it.
+    from app.core.config import settings
+
+    for browser_visible_path in ("/api/v1/auth/refresh", "/api/backend/v1/auth/refresh"):
+        assert browser_visible_path.startswith(settings.REFRESH_COOKIE_PATH), browser_visible_path
+
+
+def test_refresh_issues_a_working_access_token(client):
+    """The end-to-end recovery path a 30-minute-old session depends on."""
+    org = create_organization()
+    user, password = create_user(org, role_name="soc_analyst")
+
+    login = client.post("/api/v1/auth/login", json={"email": user.email, "password": password})
+    assert login.status_code == 200
+
+    refreshed = client.post("/api/v1/auth/refresh")
+    assert refreshed.status_code == 200, refreshed.text
+    new_token = refreshed.json()["access_token"]
+    assert new_token
+
+    me = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {new_token}"})
+    assert me.status_code == 200
+    assert me.json()["email"] == user.email

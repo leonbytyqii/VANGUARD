@@ -41,6 +41,21 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
     REFRESH_COOKIE_NAME: str = "soc_ai_refresh"
+    # Cookie path for the refresh token.
+    #
+    # `/api` rather than the narrower `/api/v1/auth`, because the browser
+    # never talks to this service directly: the Next.js frontend rewrites
+    # `/api/backend/*` to `/api/*` (see frontend/next.config.mjs), so from
+    # the browser's point of view the refresh endpoint lives at
+    # `/api/backend/v1/auth/refresh`. A cookie scoped to `/api/v1/auth`
+    # does not match that path and is silently never sent, which made
+    # refresh fail with "No refresh token presented" and logged users out
+    # every 30 minutes with no way back.
+    #
+    # `/api` is the common ancestor of the direct and proxied paths, so it
+    # works for both while still keeping the refresh token off every
+    # request to the frontend's own pages.
+    REFRESH_COOKIE_PATH: str = "/api"
 
     # --- Account lockout / brute-force protection ---
     MAX_FAILED_LOGIN_ATTEMPTS: int = 5

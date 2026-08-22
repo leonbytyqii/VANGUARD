@@ -34,7 +34,7 @@ def _set_refresh_cookie(response: Response, raw_refresh_token: str) -> None:
         secure=settings.is_production,
         samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
-        path="/api/v1/auth",
+        path=settings.REFRESH_COOKIE_PATH,
     )
 
 
@@ -73,7 +73,7 @@ def refresh(request: Request, response: Response, db: Session = Depends(get_db))
             db, raw_refresh, user_agent=request.headers.get("user-agent"), source_ip=source_ip
         )
     except AuthError as exc:
-        response.delete_cookie(settings.REFRESH_COOKIE_NAME, path="/api/v1/auth")
+        response.delete_cookie(settings.REFRESH_COOKIE_NAME, path=settings.REFRESH_COOKIE_PATH)
         raise HTTPException(status_code=exc.status_code, detail=exc.message)
 
     _set_refresh_cookie(response, new_raw)
@@ -86,7 +86,7 @@ def logout(request: Request, response: Response, db: Session = Depends(get_db)):
     raw_refresh = request.cookies.get(settings.REFRESH_COOKIE_NAME)
     if raw_refresh:
         revoke_refresh_token(db, raw_refresh, source_ip=get_client_ip(request))
-    response.delete_cookie(settings.REFRESH_COOKIE_NAME, path="/api/v1/auth")
+    response.delete_cookie(settings.REFRESH_COOKIE_NAME, path=settings.REFRESH_COOKIE_PATH)
     return None
 
 
