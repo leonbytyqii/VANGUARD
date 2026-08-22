@@ -9,6 +9,8 @@ Phase 8 wires real LLM-driven agents on top of this same dispatch
 function; these tests exercise the enforcement boundary directly so it's
 verified independently of any model behavior.
 """
+import uuid
+
 import pytest
 
 from app.ai.agents.permissions import ToolPermissionError, invoke_agent_tool
@@ -133,9 +135,30 @@ def test_disabled_agent_identity_blocks_all_tool_calls():
 
 
 def test_tool_permission_denial_is_audited():
+    """
+    Identifies the new row by *diffing the id set*, not by taking the most
+    recent one.
+
+    "Order by timestamp desc, take the first" was the original approach and
+    it is flaky: `test_disabled_agent_identity_blocks_all_tool_calls` runs
+    immediately before this and writes its own `ai_tool_permission_denied`
+    row, also for `ai_agent:triage`. When both rows land inside one tick of
+    the system clock their timestamps tie, and Postgres is free to return
+    either — so the assertion sometimes saw the previous test's
+    `search_events` denial instead of this test's.
+
+    `audit_logs` has no monotonic sequence column to tie-break on (`id` is
+    a random UUID), so the reliable way to identify "the row this call
+    produced" is to snapshot the ids beforehand and look at what is new.
+    """
     org = create_organization()
     db = SessionLocal()
     try:
+        before = {
+            row[0]
+            for row in db.query(AuditLog.id).filter(AuditLog.action == "ai_tool_permission_denied").all()
+        }
+
         with pytest.raises(ToolPermissionError):
             invoke_agent_tool(
                 db,
@@ -147,16 +170,17 @@ def test_tool_permission_denial_is_audited():
                 justification="x",
             )
 
-        entry = (
+        new_rows = (
             db.query(AuditLog)
-            .filter(AuditLog.action == "ai_tool_permission_denied")
-            .order_by(AuditLog.timestamp.desc())
-            .first()
+            .filter(AuditLog.action == "ai_tool_permission_denied", AuditLog.id.notin_(before or [uuid.uuid4()]))
+            .all()
         )
-        assert entry is not None
+        assert len(new_rows) == 1, f"expected exactly one new denial row, got {len(new_rows)}"
+        entry = new_rows[0]
         assert entry.actor_label == "ai_agent:triage"
         assert entry.resource_id == "request_response_approval"
         assert entry.outcome == "denied"
+        assert entry.details["reason"] == "tool_not_in_agent_allowlist"
     finally:
         db.close()
 
@@ -165,15 +189,28 @@ def test_successful_tool_invocation_is_also_audited():
     org = create_organization()
     db = SessionLocal()
     try:
+        # Same id-diff approach as the denial test above, for the same
+        # reason — several other tests invoke get_host_info successfully.
+        before = {
+            row[0]
+            for row in db.query(AuditLog.id)
+            .filter(AuditLog.action == "ai_tool_invoked", AuditLog.resource_id == "get_host_info")
+            .all()
+        }
+
         invoke_agent_tool(db, agent_type=AgentType.INVESTIGATION, tool_name="get_host_info", organization_id=org.id, hostname="WIN-99")
 
-        entry = (
+        new_rows = (
             db.query(AuditLog)
-            .filter(AuditLog.action == "ai_tool_invoked", AuditLog.resource_id == "get_host_info")
-            .order_by(AuditLog.timestamp.desc())
-            .first()
+            .filter(
+                AuditLog.action == "ai_tool_invoked",
+                AuditLog.resource_id == "get_host_info",
+                AuditLog.id.notin_(before or [uuid.uuid4()]),
+            )
+            .all()
         )
-        assert entry is not None
+        assert len(new_rows) == 1, f"expected exactly one new invocation row, got {len(new_rows)}"
+        entry = new_rows[0]
         assert entry.actor_label == "ai_agent:investigation"
         assert entry.outcome == "success"
     finally:
