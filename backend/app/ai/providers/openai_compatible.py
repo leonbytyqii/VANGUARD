@@ -13,7 +13,7 @@ one synthetic function — `submit_investigation_result`, whose JSON-schema
 model calls that one, its arguments are treated as `final_output`;
 any other function call is a `tool_call` the orchestrator dispatches
 through the real tool-permission gateway. This is a standard ReAct-with-
-tools pattern, not a SOC-AI-specific one, and it's why `MockProvider`
+tools pattern, not a VANGUARD-specific one, and it's why `MockProvider`
 returns the exact same `ProviderResponse` union — both providers speak
 the same "one tool call or one final answer" protocol.
 

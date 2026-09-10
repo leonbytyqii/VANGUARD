@@ -1,7 +1,7 @@
 def test_root(client):
     resp = client.get("/")
     assert resp.status_code == 200
-    assert resp.json()["service"] == "SOC-AI"
+    assert resp.json()["service"] == "VANGUARD"
 
 
 def test_health(client):

@@ -4,11 +4,11 @@ Lightweight Sigma YAML loader.
 Deliberate design decision: this does NOT depend on pySigma's parsing /
 backend-conversion machinery. pySigma is built to *compile* Sigma rules
 into query languages for specific SIEM backends (Elasticsearch DSL,
-Splunk SPL, ...); SOC-AI has no such backend yet — events live in
+Splunk SPL, ...); VANGUARD has no such backend yet — events live in
 Postgres and are matched in-process against Python objects. Pulling in
 pySigma's full pipeline/backend abstraction here would mean fighting an
 API designed for a problem we don't have. Instead this package parses the
-handful of Sigma constructs SOC-AI's rules actually use (field
+handful of Sigma constructs VANGUARD's rules actually use (field
 selections with |contains/|startswith/|endswith/|re modifiers, list-OR,
 dict-AND, and and/or/not/() in `condition`) with plain PyYAML plus a
 small safe boolean-expression evaluator (matcher.py). This is an

@@ -1,5 +1,5 @@
 /**
- * Thin fetch wrapper for talking to the SOC-AI backend.
+ * Thin fetch wrapper for talking to the VANGUARD backend.
  *
  * Browser calls go to /api/backend/* which Next.js rewrites (see
  * next.config.mjs) to the backend's /api/* — same-origin, so no CORS and

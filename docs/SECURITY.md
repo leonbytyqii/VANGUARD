@@ -1,8 +1,8 @@
-# SOC-AI — Security Model
+# VANGUARD — Security Model
 
 This document covers authentication, authorization (human RBAC + AI agent
 permissions), the human-in-the-loop approval model, multi-tenant scoping,
-audit architecture, and the threat model for SOC-AI's own security surface.
+audit architecture, and the threat model for VANGUARD's own security surface.
 Written to be read alongside the code it describes — every claim below
 names the file that enforces it and, where relevant, the test that proves
 it.
@@ -287,7 +287,7 @@ request to a language model, not a guarantee. Prompt injection (an
 attacker-controlled command line, domain name, or cloud role name
 embedded in ingested telemetry) can attempt to override system
 instructions, and a sufficiently adversarial or simply confused model can
-comply. SOC-AI's design assumes this will eventually be attempted and
+comply. VANGUARD's design assumes this will eventually be attempted and
 makes it structurally irrelevant when it is:
 
 - The model never has network/shell/API access of its own — its only

@@ -3,7 +3,7 @@ import "./globals.css";
 import { AuthGate } from "@/components/layout/AuthGate";
 
 export const metadata: Metadata = {
-  title: "SOC-AI",
+  title: "VANGUARD",
   description: "Agentic AI Security Operations Center",
 };
 

@@ -1,8 +1,8 @@
-﻿# SOC-AI â€” System Architecture
+﻿# VANGUARD â€” System Architecture
 
 ## 1. What this is
 
-SOC-AI is an **agentic Security Operations Center platform**. It combines the
+VANGUARD is an **agentic Security Operations Center platform**. It combines the
 data-plane of a SIEM (ingest, normalize, store, detect), the workflow-plane of
 a SOAR (playbooks, incidents, human approval), and a **multi-agent AI
 investigation layer** that behaves like a junior-to-mid SOC analyst: it
@@ -37,7 +37,7 @@ rather than left to be discovered.
 
 ## 2. Traditional SOAR vs. Agentic SOC
 
-| | Traditional SOAR | SOC-AI (Agentic) |
+| | Traditional SOAR | VANGUARD (Agentic) |
 |---|---|---|
 | Control flow | Fixed playbook: step 1 â†’ step 2 â†’ step 3, always the same | Agent has a **goal** ("investigate this alert") and an **evidence state**; it picks the next tool call based on what it has already learned |
 | Adaptation | None â€” a playbook can't skip or add steps based on findings | An investigation can branch: e.g. only pivots to IAM attack-path analysis if a cloud identity shows up in the process tree |
@@ -45,7 +45,7 @@ rather than left to be discovered.
 | Blueprints | Playbook *is* the logic | A **SOC Blueprint** is a *goal template with suggested steps* â€” the agent treats it as a starting checklist, not a script it's forced to follow verbatim |
 | Action | Executes automatically | Proposes an action; a human approves before anything with real-world effect happens |
 
-SOC-AI implements **both**: a classic deterministic Playbook Engine (for
+VANGUARD implements **both**: a classic deterministic Playbook Engine (for
 predictable, low-risk enrichment work) and an Agentic Investigation layer
 (for the parts of the job that require judgment). This is intentional â€” it
 lets the platform demonstrate *why* agentic reasoning is used only where it
@@ -334,7 +334,7 @@ application rewrite. Cross-tenant lookups return `404`, not `403` â€” see
 (`app/schemas/event.py::EventIngestRequest`): a `source` field plus a flat
 set of optional fields close to what a lightweight forwarder can already
 produce (Sysmon-to-JSON, journald, a syslog relay, a CloudTrail
-subscriber) without itself understanding SOC-AI's schema. `source`
+subscriber) without itself understanding VANGUARD's schema. `source`
 selects one of six adapters (`app/services/ingestion/adapters/`):
 `windows_sysmon`, `linux_auth`, `dns`, `firewall`, `cloudtrail`, and
 `synthetic_lab` (a passthrough/inference adapter for the attack-simulation
@@ -396,7 +396,7 @@ Two engines feed the same registry (`app/detections/registry.py`):
   dependency-light YAML interpreter, deliberately *not* built on pySigma's
   backend-conversion API (see `sigma_engine/loader.py`'s docstring for
   why: pySigma compiles rules into query languages for specific SIEM
-  backends SOC-AI doesn't have â€” events are matched in-process against
+  backends VANGUARD doesn't have â€” events are matched in-process against
   Postgres-backed `Event` rows instead). Supports field selections with
   `|contains`/`|startswith`/`|endswith`/`|re` modifiers, list-OR, dict-AND,
   and an `and`/`or`/`not`/`()` `condition` string evaluated by a small,
@@ -924,7 +924,7 @@ rather than leaving them to be discovered.
 
 ## 10. Non-goals / explicit boundaries
 
-- SOC-AI does not attack or scan systems it doesn't own; the lab
+- VANGUARD does not attack or scan systems it doesn't own; the lab
   (`lab/simulations/`) only generates *synthetic telemetry* that looks like
   an attack happened â€” it does not perform real exploitation.
 - The platform does not auto-remediate. Every `privileged_action` requires

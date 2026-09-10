@@ -7,7 +7,7 @@ selection/condition dicts — see that function's docstring.
 
 Two independent pieces:
 1. Field mapping — translates Sigma's conventional Sysmon-flavoured field
-   names (Image, ParentImage, CommandLine, ...) to SOC-AI's normalized
+   names (Image, ParentImage, CommandLine, ...) to VANGUARD's normalized
    `Event` column names (process, parent_process, command_line, ...), so
    rule authors can write rules using the vocabulary the wider Sigma
    ecosystem already uses, while the engine matches against our schema.
@@ -86,7 +86,7 @@ def _value_matches(event_value, expected, modifier: str | None) -> bool:
         # fields, which are full Windows paths (e.g.
         # 'C:\Windows\System32\powershell.exe'), so public rules
         # conventionally write 'Image|endswith: \powershell.exe' with a
-        # leading path separator. SOC-AI's normalized Event.process field
+        # leading path separator. VANGUARD's normalized Event.process field
         # deliberately stores just the executable name (see
         # app/schemas/event.py), not a full path — so a leading '\' or
         # '/' on the expected pattern is stripped before comparing,

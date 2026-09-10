@@ -6,7 +6,7 @@ module directly, so revoking a permission from a role in the admin UI
 takes effect immediately without a redeploy.
 
 Permission codes follow `resource.action`. The base list matches the set
-specified for SOC-AI Phase 2; a few narrow additions
+specified for VANGUARD Phase 2; a few narrow additions
 (incidents.update, events.ingest, admin.agents, detections.read,
 detections.run, mitre.read, threat_hunting.read, threat_hunting.write,
 ai.read) were needed for the platform to actually function end-to-end

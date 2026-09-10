@@ -1,4 +1,4 @@
-# SOC-AI
+# VANGUARD
 
 **An agentic AI Security Operations Center platform** — SIEM ingestion and
 detection, SOAR-style incident and approval workflows, and a multi-agent AI
@@ -11,7 +11,7 @@ free-text guesses. Full design rationale: [`docs/ARCHITECTURE.md`](docs/ARCHITEC
 > effect requires explicit human approval. See §4 and §6 of the architecture
 > doc for how that is enforced structurally, not just by prompt instruction.
 
-**Status: all 15 phases complete.** 422 automated tests passing, `ruff check`
+**Status: all 15 phases complete.** 461 automated tests passing, `ruff check`
 clean, `alembic check` reporting zero drift, and a Next.js frontend that
 builds cleanly across 15 routes.
 
@@ -170,7 +170,7 @@ npm run build                    # 15 routes
 ## Repository layout
 
 ```
-soc-ai/
+vanguard/
 ├── backend/            FastAPI service: API, ORM models, detections, AI agents
 │   ├── app/
 │   │   ├── api/v1/       REST endpoints (14 routers)

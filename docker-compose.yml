@@ -77,7 +77,7 @@ services:
     restart: unless-stopped
     environment:
       BACKEND_INTERNAL_URL: http://backend:8000
-      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-SOC-AI}
+      NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-VANGUARD}
     depends_on:
       - backend
     ports:

@@ -49,7 +49,7 @@ export function LoginForm() {
             <ShieldAlert size={22} />
           </div>
           <div>
-            <div className="text-lg font-semibold text-soc-text">SOC-AI</div>
+            <div className="text-lg font-semibold text-soc-text">VANGUARD</div>
             <div className="text-[11px] uppercase tracking-widest text-soc-muted">
               Agentic Security Operations Center
             </div>

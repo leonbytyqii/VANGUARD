@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # --- Core ---
-    APP_NAME: str = "SOC-AI"
+    APP_NAME: str = "VANGUARD"
     ENVIRONMENT: Literal["development", "staging", "production"] = "development"
     DEBUG: bool = True
     API_V1_PREFIX: str = "/api/v1"

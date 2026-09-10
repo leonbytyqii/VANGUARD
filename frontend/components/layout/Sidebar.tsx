@@ -51,7 +51,7 @@ export function Sidebar() {
           <ShieldAlert size={18} />
         </div>
         <div>
-          <div className="text-sm font-semibold tracking-wide text-soc-text">SOC-AI</div>
+          <div className="text-sm font-semibold tracking-wide text-soc-text">VANGUARD</div>
           <div className="text-[10px] uppercase tracking-widest text-soc-muted">Agentic SOC Platform</div>
         </div>
       </div>

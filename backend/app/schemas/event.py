@@ -9,7 +9,7 @@ class EventIngestRequest(BaseModel):
     The ingestion API's request shape. Deliberately "semi-normalized" —
     close to what a lightweight forwarder (Sysmon-to-JSON, journald, a
     firewall syslog relay, a CloudTrail subscriber) can produce without
-    itself understanding SOC-AI's internal schema — while still requiring
+    itself understanding VANGUARD's internal schema — while still requiring
     a `source` field that selects which adapter
     (app/services/ingestion/adapters/) interprets `event_type`/`action`
     and fills in the normalized `category`.

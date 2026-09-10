@@ -6,13 +6,13 @@ Two very different kinds of detection logic need to coexist:
 
 - **Single-event pattern matching** — "this one process-creation event's
   command line looks like an encoded PowerShell payload." Sigma is the
-  industry-standard way to express this, and SOC-AI ships a rule engine
+  industry-standard way to express this, and VANGUARD ships a rule engine
   for it.
 - **Multi-event correlation** — "five failed logins, then a success, then
   a sudo command, all for the same user within 15 minutes." Sigma's
   single-event model can't express this without falling back to its
   aggregation/`near` extensions, which most Sigma backends implement
-  inconsistently. SOC-AI expresses these as small, explicit Python
+  inconsistently. VANGUARD expresses these as small, explicit Python
   classes instead.
 
 Both are forced through the same interface
@@ -49,7 +49,7 @@ of Sigma YAML with plain PyYAML, not pySigma.
 
 **Why not pySigma:** pySigma's job is *compiling* a Sigma rule into a
 target query language (Elasticsearch DSL, Splunk SPL, a specific SIEM
-backend's syntax) via its pipeline/backend abstraction. SOC-AI has no such
+backend's syntax) via its pipeline/backend abstraction. VANGUARD has no such
 backend — events live in Postgres and rules are evaluated in-process
 against `Event` ORM objects. Pulling in pySigma's backend-conversion
 machinery here would mean fighting an API built for a problem this system
@@ -80,7 +80,7 @@ full Sigma spec.
   string cannot execute code.
 - Field mapping: conventional Sigma/Sysmon field names (`Image`,
   `ParentImage`, `CommandLine`, `DestinationIp`, `QueryName`, ...) are
-  translated to SOC-AI's normalized `Event` columns
+  translated to VANGUARD's normalized `Event` columns
   (`sigma_engine/matcher.py::FIELD_MAP`), so rules can be written in the
   vocabulary the wider Sigma ecosystem already uses.
 - `tags: [attack.txxxx, ...]` → parsed into `mitre_technique_ids`.
@@ -92,7 +92,7 @@ exactly the multi-event cases the custom detections below handle with
 plain, readable Python instead of a mini query language.
 
 **A path-vs-name normalization note:** real Sysmon `Image` values are
-full paths (`C:\Windows\System32\powershell.exe`); SOC-AI's normalized
+full paths (`C:\Windows\System32\powershell.exe`); VANGUARD's normalized
 `Event.process` field deliberately stores just the executable name (see
 `app/schemas/event.py`). Rules are still written in the conventional
 `Image|endswith: '\powershell.exe'` style (so they read like real-world

@@ -95,7 +95,7 @@ _PROMPT_INJECTION_GUARD = (
 )
 
 _TRIAGE_SYSTEM_PROMPT = (
-    "You are the Triage Agent for SOC-AI, an autonomous security-operations analyst. "
+    "You are the Triage Agent for VANGUARD, an autonomous security-operations analyst. "
     "Your job is only to decide whether this alert deserves a full investigation and "
     "to assign an initial severity — not to reach a final conclusion. "
     f"{_PROMPT_INJECTION_GUARD} "
@@ -103,7 +103,7 @@ _TRIAGE_SYSTEM_PROMPT = (
 )
 
 _INVESTIGATION_SYSTEM_PROMPT = (
-    "You are the Investigation Agent for SOC-AI, an autonomous security-operations analyst. "
+    "You are the Investigation Agent for VANGUARD, an autonomous security-operations analyst. "
     "Build an evidence-grounded account of what happened using only tool calls — you are never "
     "shown raw log content directly. Every item in observed_evidence must cite the tool call "
     "(and, for event-level claims, the exact event id) that actually produced it. "

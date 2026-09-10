@@ -3,7 +3,7 @@
 GeoIP-resolve both source IPs, compute great-circle distance and the
 implied minimum travel speed between the two login timestamps, and flag
 only when that speed exceeds any real-world transport (the classic
-"logged in from New York, then Tokyo, nine minutes later" check). SOC-AI
+"logged in from New York, then Tokyo, nine minutes later" check). VANGUARD
 does not have a GeoIP database wired in yet (planned alongside real
 threat-intel provider integration in Phase 10), so this is deliberately
 downgraded to a proxy signal: the same user authenticating successfully
