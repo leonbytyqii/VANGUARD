@@ -1,6 +1,6 @@
 import os
 
-os.environ.setdefault("DATABASE_URL", "postgresql+psycopg2://socai:socai@localhost:5432/socai_test")
+os.environ.setdefault("DATABASE_URL", "postgresql+psycopg2://socai:socai@localhost:55432/socai_test")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret")
 os.environ.setdefault("MAX_FAILED_LOGIN_ATTEMPTS", "3")  # keep lockout tests fast
 # The test suite makes far more than 10 login calls per minute across many
