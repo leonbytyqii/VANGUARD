@@ -21,18 +21,11 @@ from app.models.auth import TOTPDevice
 from app.models.user import User
 from app.services.api_key_service import create_api_key
 from app.services.mfa_service import (
-    MFAAlreadyEnabledError,
-    MFANotEnrolledError,
     begin_totp_setup,
     confirm_totp_setup,
-    disable_totp,
-    recovery_codes_remaining,
-    regenerate_recovery_codes,
     verify_recovery_code,
-    verify_totp,
 )
 from tests.factories import auth_headers, create_organization, create_user
-
 
 # ---------------------------------------------------------------------------
 # Helpers

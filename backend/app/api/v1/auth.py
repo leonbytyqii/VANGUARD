@@ -35,7 +35,6 @@ from app.services.auth_service import (
 from app.services.mfa_service import (
     MFAAlreadyEnabledError,
     MFAError,
-    MFANotEnrolledError,
     begin_totp_setup,
     confirm_totp_setup,
     disable_totp,

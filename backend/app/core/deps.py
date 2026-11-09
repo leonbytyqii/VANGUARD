@@ -22,8 +22,8 @@ from sqlalchemy.orm import Session
 from app.core.security import TokenType, decode_token
 from app.db.session import get_db
 from app.models.user import User
-from app.services.audit import log_audit_event
 from app.services.api_key_service import authenticate_by_api_key
+from app.services.audit import log_audit_event
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
