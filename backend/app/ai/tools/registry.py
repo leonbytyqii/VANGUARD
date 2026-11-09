@@ -94,10 +94,21 @@ def _search_events(
     user: str | None = None,
     process: str | None = None,
     src_ip: str | None = None,
+    since_hours: int = 72,
     limit: int = 25,
     **_,
 ) -> dict[str, Any]:
-    q = db.query(Event).filter(Event.organization_id == organization_id)
+    # Default to a 72-hour lookback so investigations are scoped to recent
+    # context rather than scanning the entire event table, which can be large
+    # on a long-running deployment. The agent can pass a larger since_hours
+    # (up to 720 = 30 days) for wider historical searches.
+    from datetime import datetime, timedelta, timezone
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=min(max(since_hours, 1), 720))
+
+    q = db.query(Event).filter(
+        Event.organization_id == organization_id,
+        Event.event_timestamp >= cutoff,
+    )
     if host_name:
         q = q.filter(Event.host_name_raw == host_name)
     if user:
@@ -419,12 +430,18 @@ TOOL_REGISTRY: dict[str, ToolDefinition] = {
         parameters={"type": "object", "properties": {"alert_id": {"type": "string"}}, "required": ["alert_id"]},
     ),
     "search_events": ToolDefinition(
-        "search_events", ActionEffect.READ_ONLY, "Search normalized events by host/user/process/ip.", _search_events,
+        "search_events", ActionEffect.READ_ONLY,
+        "Search normalized events by host/user/process/ip within a lookback window (default 72h, max 720h).",
+        _search_events,
         parameters={
             "type": "object",
             "properties": {
-                "host_name": {"type": "string"}, "user": {"type": "string"}, "process": {"type": "string"},
-                "src_ip": {"type": "string"}, "limit": {"type": "integer"},
+                "host_name": {"type": "string"},
+                "user": {"type": "string"},
+                "process": {"type": "string"},
+                "src_ip": {"type": "string"},
+                "since_hours": {"type": "integer", "description": "How far back to look (1–720). Default 72."},
+                "limit": {"type": "integer"},
             },
         },
     ),

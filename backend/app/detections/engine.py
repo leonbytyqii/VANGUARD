@@ -161,6 +161,9 @@ def _sync_single_rule(db: Session, definition: DetectionDefinition) -> Detection
     return row
 
 
+_SWEEP_PAGE_SIZE = 500
+
+
 def run_all_detections(
     db: Session,
     *,
@@ -172,18 +175,30 @@ def run_all_detections(
     the full registry. Used by the manual "/detections/run" endpoint and
     for replaying attack-simulation-lab telemetry after the fact — not on
     the ingestion hot path.
+
+    Events are fetched in pages of _SWEEP_PAGE_SIZE rather than loading
+    the entire result set into memory — a common failure mode on deployments
+    with large event tables and a wide `since` window.
     """
     since = since or (datetime.now(timezone.utc) - timedelta(hours=24))
     rules_by_id = {r.rule_id: r for r in db.query(DetectionRule).all()}
 
-    events = (
-        db.query(Event)
-        .filter(Event.organization_id == organization_id, Event.event_timestamp >= since)
-        .order_by(Event.event_timestamp.asc())
-        .all()
-    )
-
     created: list[Detection] = []
-    for event in events:
-        created.extend(run_detections_for_event(db, organization_id=organization_id, event=event, rules_by_id=rules_by_id))
+    offset = 0
+    while True:
+        events = (
+            db.query(Event)
+            .filter(Event.organization_id == organization_id, Event.event_timestamp >= since)
+            .order_by(Event.event_timestamp.asc())
+            .offset(offset)
+            .limit(_SWEEP_PAGE_SIZE)
+            .all()
+        )
+        if not events:
+            break
+        for event in events:
+            created.extend(run_detections_for_event(db, organization_id=organization_id, event=event, rules_by_id=rules_by_id))
+        if len(events) < _SWEEP_PAGE_SIZE:
+            break
+        offset += _SWEEP_PAGE_SIZE
     return created

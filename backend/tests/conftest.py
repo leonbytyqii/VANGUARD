@@ -1,6 +1,10 @@
 import os
 
-os.environ.setdefault("DATABASE_URL", "postgresql+psycopg2://socai:socai@localhost:55432/socai_test")
+# Port 5432 is the standard Postgres port used both by CI (GitHub Actions
+# postgres service) and a local `docker compose up`. On Leon's dev machine the
+# portable Postgres listens on 55432 — set DATABASE_URL in the environment or
+# in backend/.env before running pytest locally to override this default.
+os.environ.setdefault("DATABASE_URL", "postgresql+psycopg2://socai:socai@localhost:5432/socai_test")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret")
 os.environ.setdefault("MAX_FAILED_LOGIN_ATTEMPTS", "3")  # keep lockout tests fast
 # The test suite makes far more than 10 login calls per minute across many

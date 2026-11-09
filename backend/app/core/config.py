@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
-    REFRESH_COOKIE_NAME: str = "soc_ai_refresh"
+    REFRESH_COOKIE_NAME: str = "vanguard_refresh"
     # Cookie path for the refresh token.
     #
     # `/api` rather than the narrower `/api/v1/auth`, because the browser
@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     PASSWORD_MIN_LENGTH: int = 12
 
     # --- Bootstrap admin (only used by app/db/seed.py on first run) ---
-    ADMIN_BOOTSTRAP_EMAIL: str = "admin@soc-ai.local"
+    ADMIN_BOOTSTRAP_EMAIL: str = "admin@vanguard.local"
     ADMIN_BOOTSTRAP_PASSWORD: str | None = Field(
         default=None,
         description="If unset, seed.py generates a random password and prints it once — never stored in code.",

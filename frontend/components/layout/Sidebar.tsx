@@ -13,6 +13,8 @@ import {
   Search,
   Settings,
   ShieldAlert,
+  ShieldCheck,
+  TrendingUp,
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
@@ -30,6 +32,8 @@ const NAV = [
   { href: "/alerts", label: "Alerts", icon: ShieldAlert, permission: "alerts.read" },
   { href: "/incidents", label: "Incidents", icon: FolderKanban, permission: "incidents.read" },
   { href: "/ai", label: "AI Investigations", icon: Bot, permission: "ai.read" },
+  { href: "/detections", label: "Detections", icon: ShieldCheck, permission: "detections.read" },
+  { href: "/entity-risk", label: "Entity Risk", icon: TrendingUp, permission: "alerts.read" },
   { href: "/hunting", label: "Threat Hunting", icon: Search, permission: "threat_hunting.read" },
   { href: "/threat-intel", label: "Threat Intel", icon: Radar, permission: "threat_intel.lookup" },
   { href: "/mitre", label: "MITRE ATT&CK", icon: Crosshair, permission: "mitre.read" },

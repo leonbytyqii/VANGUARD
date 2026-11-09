@@ -7,7 +7,7 @@ address whose domain ends in an RFC 6761 special-use TLD — including
 Active Directory / internal corporate networks (exactly the environment a
 SOC platform's analysts and default bootstrap accounts live in). Phase 2
 testing caught this directly: the seeded bootstrap admin
-(admin@soc-ai.local) could not log in through the API because of it. A
+(admin@vanguard.local) could not log in through the API because of it. A
 syntax-only check avoids rejecting legitimate internal users while still
 catching malformed input.
 """

@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  backend:
+    name: Backend — lint, type-check, test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: socai
+          POSTGRES_PASSWORD: socai_test
+          POSTGRES_DB: socai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U socai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+psycopg2://socai:socai_test@localhost:5432/socai_test
+      JWT_SECRET_KEY: ci-test-secret-not-for-production-use
+      REDIS_URL: redis://localhost:6379/0
+      ENVIRONMENT: development
+      AI_PROVIDER: mock
+      THREAT_INTEL_MODE: mock
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint (ruff)
+        run: pip install ruff && ruff check .
+
+      - name: Run tests
+        run: pytest --tb=short -q
+
+      - name: Check Alembic drift
+        run: |
+          alembic upgrade head
+          alembic check
+
+  frontend:
+    name: Frontend — type-check, build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: Build
+        env:
+          NEXT_PUBLIC_APP_NAME: VANGUARD
+          BACKEND_INTERNAL_URL: http://localhost:8000
+        run: npm run build
