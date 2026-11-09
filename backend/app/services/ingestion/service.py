@@ -146,7 +146,9 @@ def ingest_event(db: Session, *, organization_id: uuid.UUID, payload: EventInges
     # (Celery/Redis, already scaffolded in docker-compose.yml) without
     # ingest_event's callers needing to change.
     from app.detections.engine import run_detections_for_event  # local import: avoids a service/detections import cycle
-    from app.services.alerting import generate_alerts_for_detections  # local import: avoids a service/alerting import cycle
+    from app.services.alerting import (
+        generate_alerts_for_detections,  # local import: avoids a service/alerting import cycle
+    )
 
     fired_detections = run_detections_for_event(db, organization_id=organization_id, event=event)
     if fired_detections:

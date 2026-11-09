@@ -12,18 +12,17 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.ai.agents.permissions import invoke_agent_tool
+from app.ai.tools.registry import TOOL_REGISTRY
 from app.db.session import SessionLocal
 from app.models.alert import Alert
 from app.models.enums import ActionEffect, AgentType, IOCType
 from app.models.threat_intel import IOC, ThreatIntelligence
-from app.ai.tools.registry import TOOL_REGISTRY
 from app.threat_intel.extraction import extract_from_event
 from app.threat_intel.providers.base import ProviderResult, ThreatIntelProvider
 from app.threat_intel.providers.local import LocalFeedProvider
 from app.threat_intel.registry import MIN_CONFIDENCE, aggregate, get_providers
 from app.threat_intel.sample_feed import SAMPLE_INDICATORS
 from tests.factories import auth_headers, create_organization, create_user
-
 
 # --------------------------------------------------------------------------
 # Helpers

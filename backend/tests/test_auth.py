@@ -17,7 +17,6 @@ from app.core.security import (
 )
 from tests.factories import create_organization, create_user, login
 
-
 # --- Password hashing ---
 
 

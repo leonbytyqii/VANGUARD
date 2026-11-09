@@ -39,8 +39,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.incidents.task_templates import default_checklist
-from app.models.alert import Alert
 from app.models.ai import AIInvestigation
+from app.models.alert import Alert
 from app.models.automation import ResponseAction
 from app.models.enums import (
     IncidentClosureClassification,

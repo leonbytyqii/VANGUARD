@@ -8,10 +8,10 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from app.db.session import SessionLocal
 from app.hunting.builtin_queries import BUILTIN_HUNT_QUERIES
 from app.hunting.engine import HuntQueryError, run_hunt, validate_query_definition
 from app.hunting.seed import sync_builtin_hunt_queries
-from app.db.session import SessionLocal
 from app.mitre.data import TECHNIQUES
 from app.models.hunting import HuntQuery
 from tests.factories import auth_headers, create_organization, create_user
@@ -375,6 +375,7 @@ def test_custom_query_is_not_visible_or_editable_by_another_org():
         db.close()
 
     from fastapi.testclient import TestClient
+
     from app.main import app
 
     client = TestClient(app)

@@ -13,7 +13,6 @@ from app.models.detection import DetectionRule
 from app.models.mitre import MitreTactic, MitreTechnique
 from tests.factories import auth_headers, create_organization, create_user
 
-
 # --- data-integrity invariants (pure, no DB) ---
 
 

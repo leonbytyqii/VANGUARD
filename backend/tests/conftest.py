@@ -86,6 +86,7 @@ def db_session(_test_database):
 @pytest.fixture()
 def client():
     from fastapi.testclient import TestClient
+
     from app.main import app
 
     return TestClient(app)
