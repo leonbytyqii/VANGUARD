@@ -21,7 +21,7 @@ from app.models.automation import ResponseAction, SOCBlueprint
 from app.models.enums import AgentType
 from tests.factories import auth_headers, create_organization, create_user
 
-_BASE_TIME = datetime(2026, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+_BASE_TIME = datetime.now(timezone.utc)
 
 
 def _ts(offset_minutes: float = 0) -> str:
