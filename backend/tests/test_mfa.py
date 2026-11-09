@@ -119,9 +119,9 @@ def test_confirm_totp_setup_with_wrong_code_returns_400(client):
 def test_begin_totp_setup_while_already_enabled_returns_409(client):
     org = create_organization()
     user, pw = create_user(org)
+    headers = auth_headers(client, user.email, pw)
     _enrol_totp(user)
 
-    headers = auth_headers(client, user.email, pw)
     resp = client.post("/api/v1/auth/mfa/setup", headers=headers)
     assert resp.status_code == 409
 
@@ -259,8 +259,8 @@ def test_recovery_code_cannot_be_reused(client):
 def test_mfa_status_shows_enabled_and_code_count(client):
     org = create_organization()
     user, pw = create_user(org)
-    _enrol_totp(user)
     headers = auth_headers(client, user.email, pw)
+    _enrol_totp(user)
 
     resp = client.get("/api/v1/auth/mfa/status", headers=headers)
     assert resp.status_code == 200, resp.text
@@ -282,8 +282,8 @@ def test_mfa_status_shows_disabled_for_unenrolled_user(client):
 def test_disable_mfa_with_valid_totp_code(client):
     org = create_organization()
     user, pw = create_user(org)
-    secret, _ = _enrol_totp(user)
     headers = auth_headers(client, user.email, pw)
+    secret, _ = _enrol_totp(user)
 
     code = pyotp.TOTP(secret).now()
     resp = client.post("/api/v1/auth/mfa/disable", headers=headers, json={"code": code})
@@ -296,8 +296,8 @@ def test_disable_mfa_with_valid_totp_code(client):
 def test_disable_mfa_with_wrong_code_returns_400(client):
     org = create_organization()
     user, pw = create_user(org)
-    _enrol_totp(user)
     headers = auth_headers(client, user.email, pw)
+    _enrol_totp(user)
 
     resp = client.post("/api/v1/auth/mfa/disable", headers=headers, json={"code": "000000"})
     assert resp.status_code == 400
@@ -315,8 +315,8 @@ def test_disable_mfa_on_unenrolled_user_returns_404(client):
 def test_recovery_codes_regenerated_invalidates_old_codes(client):
     org = create_organization()
     user, pw = create_user(org)
-    secret, old_codes = _enrol_totp(user)
     headers = auth_headers(client, user.email, pw)
+    secret, old_codes = _enrol_totp(user)
 
     code = pyotp.TOTP(secret).now()
     regen_resp = client.post(
