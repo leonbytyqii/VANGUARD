@@ -25,8 +25,8 @@ def upgrade() -> None:
     op.create_table(
         'totp_devices',
         sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
         sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('encrypted_secret', sa.Text(), nullable=False),
         sa.Column('confirmed', sa.Boolean(), nullable=False, server_default=sa.text('false')),
@@ -54,8 +54,8 @@ def upgrade() -> None:
     op.create_table(
         'api_keys',
         sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
         sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('organization_id', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('name', sa.String(100), nullable=False),
