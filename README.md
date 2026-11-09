@@ -11,7 +11,7 @@ free-text guesses. Full design rationale: [`docs/ARCHITECTURE.md`](docs/ARCHITEC
 > effect requires explicit human approval. See §4 and §6 of the architecture
 > doc for how that is enforced structurally, not just by prompt instruction.
 
-**Status: all 15 phases complete.** 461 automated tests passing, `ruff check`
+**Status: all 15 phases complete.** 466 automated tests passing, `ruff check`
 clean, `alembic check` reporting zero drift, and a Next.js frontend that
 builds cleanly across 15 routes.
 
@@ -116,7 +116,7 @@ telemetry, detections, alerts and cloud identities in one click.
 ```bash
 cd backend
 ./../scripts/create_test_db.sh   # one-time: creates the socai_test database
-pytest -q                        # 422 tests
+pytest -q                        # 466 tests
 ruff check .                     # clean
 alembic check                    # no drift
 
@@ -142,6 +142,9 @@ npm run build                    # 15 routes
 | `test_lab.py` | 24 | Every scenario fires its expected detections |
 | `test_security.py` | 67 | Adversarial suite, organized by attacker goal |
 | `test_hardening.py` | 17 | Fail-closed startup checks, headers, `.gitignore` |
+| `test_dashboard.py` | 20 | Aggregation endpoint, every dashboard widget, 5-role read access |
+| `test_response_actions.py` | 6 | Human-approval lifecycle, agent filing, approval/rejection/execution |
+| `test_worker.py` | 5 | Celery task dispatch, isolation, retry behaviour |
 
 ---
 
@@ -187,7 +190,7 @@ vanguard/
 │   │   ├── cloud_iam/    CloudTrail projection + attack-path reconstruction
 │   │   └── lab/          attack-simulation scenario library
 │   ├── alembic/          migrations
-│   └── tests/            422 tests
+│   └── tests/            466 tests
 ├── frontend/            Next.js 14 + TypeScript + Tailwind, dark SOC UI
 ├── detections/          Sigma rules (data, not code)
 ├── lab/                 sample telemetry
