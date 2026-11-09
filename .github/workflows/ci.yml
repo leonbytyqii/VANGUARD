@@ -55,7 +55,15 @@ jobs:
         run: pip install ruff && ruff check .
 
       - name: Run tests
-        run: pytest --tb=short -q
+        run: |
+          python -m pytest --tb=short -q 2>&1 | tee /tmp/pytest-out.txt
+          EXIT=${PIPESTATUS[0]}
+          if [ "$EXIT" -ne 0 ]; then
+            head -60 /tmp/pytest-out.txt | while IFS= read -r line; do
+              [ -n "$line" ] && printf '::error::%s\n' "$line"
+            done
+          fi
+          exit "$EXIT"
 
       - name: Check Alembic drift
         run: |
