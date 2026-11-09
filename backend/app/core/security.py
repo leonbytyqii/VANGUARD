@@ -39,6 +39,7 @@ _COMMON_PASSWORD_BLOCKLIST = {
 class TokenType(str, Enum):
     ACCESS = "access"
     REFRESH = "refresh"
+    MFA_CHALLENGE = "mfa_challenge"
 
 
 def hash_password(plain_password: str) -> str:
@@ -127,6 +128,38 @@ def decode_token(token: str) -> dict[str, Any]:
     return jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
 
 
+# MFA challenge token: short-lived (5 min), single-use signal that the
+# first factor (password) has passed and only the second factor (TOTP)
+# remains. It binds to a specific user_id and is verified in /auth/mfa/complete.
+_MFA_CHALLENGE_TTL_MINUTES = 5
+
+
+def create_mfa_challenge_token(user_id: str) -> str:
+    return _create_jwt(
+        subject=user_id,
+        token_type=TokenType.MFA_CHALLENGE,
+        expires_delta=timedelta(minutes=_MFA_CHALLENGE_TTL_MINUTES),
+    )
+
+
+def decode_mfa_challenge_token(token: str) -> str | None:
+    """
+    Validate a MFA challenge token. Returns the user_id (sub claim) on
+    success; returns None on any failure (expired, wrong type, bad sig).
+    """
+    import uuid as _uuid
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        if payload.get("type") != TokenType.MFA_CHALLENGE.value:
+            return None
+        user_id = payload.get("sub")
+        # Validate it's a valid UUID before returning
+        _uuid.UUID(user_id)
+        return user_id
+    except (JWTError, ValueError, TypeError):
+        return None
+
+
 __all__ = [
     "JWTError",
     "TokenType",
@@ -139,4 +172,6 @@ __all__ = [
     "create_refresh_token_raw",
     "hash_refresh_token",
     "decode_token",
+    "create_mfa_challenge_token",
+    "decode_mfa_challenge_token",
 ]

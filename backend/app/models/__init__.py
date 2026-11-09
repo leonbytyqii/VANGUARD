@@ -6,7 +6,7 @@ from app.models.agent_identity import AgentIdentity  # noqa: F401
 from app.models.ai import AgentEvidence, AgentStep, AIInvestigation  # noqa: F401
 from app.models.alert import Alert, alert_mitre_techniques  # noqa: F401
 from app.models.audit import AuditLog  # noqa: F401
-from app.models.auth import RefreshToken  # noqa: F401
+from app.models.auth import APIKey, RecoveryCode, RefreshToken, TOTPDevice  # noqa: F401
 from app.models.automation import Playbook, PlaybookRun, ResponseAction, SOCBlueprint  # noqa: F401
 from app.models.cloud import CloudEvent, CloudIdentity, IAMAttackPath  # noqa: F401
 from app.models.detection import Detection, DetectionRule  # noqa: F401
@@ -29,7 +29,7 @@ from app.models.user import Permission, Role, User, role_permissions  # noqa: F4
 __all__ = [
     "Organization",
     "Permission", "Role", "User", "role_permissions",
-    "RefreshToken",
+    "RefreshToken", "TOTPDevice", "RecoveryCode", "APIKey",
     "AgentIdentity",
     "Host",
     "Event", "NetworkConnection", "Process",

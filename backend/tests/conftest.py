@@ -7,6 +7,8 @@ import os
 os.environ.setdefault("DATABASE_URL", "postgresql+psycopg2://socai:socai@localhost:5432/socai_test")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret")
 os.environ.setdefault("MAX_FAILED_LOGIN_ATTEMPTS", "3")  # keep lockout tests fast
+# Valid 32-byte URL-safe base64 Fernet key (all-zero bytes) for test TOTP encryption.
+os.environ.setdefault("MFA_ENCRYPTION_KEY", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
 # The test suite makes far more than 10 login calls per minute across many
 # unrelated tests (all appearing to come from the same TestClient "IP") —
 # that's a testing-harness artifact, not something the per-IP auth rate

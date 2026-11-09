@@ -21,6 +21,7 @@ from app.api.v1 import (
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["meta"])
 api_router.include_router(auth.router)
+api_router.include_router(auth.api_key_router)
 api_router.include_router(admin.router)
 api_router.include_router(response.router)
 api_router.include_router(incidents.router)

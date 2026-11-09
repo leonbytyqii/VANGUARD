@@ -23,6 +23,7 @@ from app.core.security import TokenType, decode_token
 from app.db.session import get_db
 from app.models.user import User
 from app.services.audit import log_audit_event
+from app.services.api_key_service import authenticate_by_api_key
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -42,8 +43,21 @@ def get_current_user(
     if credentials is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
+    token = credentials.credentials
+
+    # API key path: "vanguard_<hex>" format, never a JWT
+    if token.startswith("vanguard_"):
+        api_key = authenticate_by_api_key(db, token)
+        if api_key is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or revoked API key")
+        user = db.query(User).filter(User.id == api_key.user_id).one_or_none()
+        if user is None or not user.is_active:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found or inactive")
+        request.state.current_user = user
+        return user
+
     try:
-        payload = decode_token(credentials.credentials)
+        payload = decode_token(token)
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
 

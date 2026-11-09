@@ -65,6 +65,9 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     # --- Forced password rotation (e.g. after admin-provisioned reset) ---
     must_change_password: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    # --- MFA ---
+    totp_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
     def has_permission(self, code: str) -> bool:
         if self.is_superuser:
             return True

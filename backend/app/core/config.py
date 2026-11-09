@@ -57,6 +57,19 @@ class Settings(BaseSettings):
     # request to the frontend's own pages.
     REFRESH_COOKIE_PATH: str = "/api"
 
+    # --- MFA ---
+    # 32-byte Fernet key (base64url-encoded) used to encrypt TOTP secrets at
+    # rest. Must be overridden in non-dev deployments. Generate with:
+    #   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+    MFA_ENCRYPTION_KEY: str = Field(
+        default="CHANGE_ME_DEV_ONLY_INSECURE_MFA_KEY_32b==",
+        description="Fernet key for encrypting TOTP secrets at rest",
+    )
+    # Number of backup recovery codes issued when TOTP is first enabled.
+    MFA_RECOVERY_CODE_COUNT: int = 10
+    # Issuer label shown in authenticator apps (e.g. "VANGUARD (alice@acme.com)").
+    MFA_ISSUER: str = "VANGUARD"
+
     # --- Account lockout / brute-force protection ---
     MAX_FAILED_LOGIN_ATTEMPTS: int = 5
     ACCOUNT_LOCKOUT_MINUTES: int = 15
